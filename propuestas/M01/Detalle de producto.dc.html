@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/sillar-ui-25e4271c-0565-4ef0-832f-a8eba6ce38e5/styles.css">
+  <link rel="stylesheet" href="harness.css">
+  <script src="_ds/sillar-ui-25e4271c-0565-4ef0-832f-a8eba6ce38e5/_ds_bundle.js"></script>
+</helmet>
+<div data-theme="{{ temaAttr }}" data-screen-label="Detalle de producto" style="background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100%;">
+  <div style="display: flex; flex-direction: column; gap: var(--s5); padding: var(--s6); max-width: 1120px; width: 100%; margin: 0 auto;">
+
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s5); flex-wrap: wrap;">
+      <div style="display: flex; flex-direction: column; gap: var(--s2); max-width: 620px;">
+        <a href="#" style="font-size: 13px; color: var(--primary);">‹ Productos</a>
+        <h1 style="font-size: 24px;">{{ titulo }}</h1>
+        <sc-if value="{{ hayEstadoCabecera }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; align-items: center; gap: var(--s2);">
+            <x-import component-from-global-scope="SillarUI.Badge" tone="success" hint-size="60px,20px">Activo</x-import>
+            <span style="font-size: 12.5px; color: var(--text-subtle); font-family: var(--mono); white-space: nowrap;">PLU-ART-PG</span>
+          </div>
+        </sc-if>
+      </div>
+      <sc-if value="{{ hayGuardar }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; gap: var(--s2); align-items: center;">
+          <x-import component-from-global-scope="SillarUI.Button" variant="secondary" hint-size="150px,36px">Descartar cambios</x-import>
+          <x-import component-from-global-scope="SillarUI.Button" hint-size="150px,36px">{{ etiquetaGuardar }}</x-import>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ estaCargando }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="SillarUI.Card" hint-size="100%,260px">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s3); padding: var(--s8) var(--s4); color: var(--text-muted);">
+          <x-import component-from-global-scope="SillarUI.Spinner" size="lg" hint-size="32px,32px"></x-import>
+          <p style="font-size: 14px;">Cargando el producto…</p>
+        </div>
+      </x-import>
+    </sc-if>
+
+    <sc-if value="{{ hayFormulario }}" hint-placeholder-val="{{ true }}">
+      <div style="display: grid; grid-template-columns: {{ rejilla }}; gap: var(--s5); align-items: start;">
+
+        <div style="display: flex; flex-direction: column; gap: var(--s5); min-width: 0;">
+
+          <x-import component-from-global-scope="SillarUI.Card" title="Datos del producto" hint-size="100%,420px">
+            <div style="display: flex; flex-direction: column; gap: var(--s5);">
+
+              <sc-if value="{{ hayConflictoCodigo }}" hint-placeholder-val="{{ false }}">
+                <x-import component-from-global-scope="SillarUI.Alert" tone="danger" title="El código de barras 7751234500028 ya está en uso" hint-size="100%,80px">Lo tiene «Cuaderno universitario cuadriculado Stanford A4 100 hojas». Escribe otro código de barras aquí, o quítaselo a ese producto y vuelve a guardar. El código interno PLU-ART-PG no choca con nada.</x-import>
+              </sc-if>
+
+              <x-import component-from-global-scope="SillarUI.Field" label="Nombre" required="{{ true }}" hint="Producto, característica, marca y presentación. Así se busca en la caja." children="{{ campoNombre }}" hint-size="100%,72px"></x-import>
+
+              <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s4); padding: var(--s3) var(--s4); background: var(--bg-sunken); border-radius: var(--r-md);">
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                  <span style="font-size: 12.5px; color: var(--text-subtle);">Categoría</span>
+                  <span style="font-size: 14px; font-weight: 560;">{{ categoria }}</span>
+                </div>
+                <x-import component-from-global-scope="SillarUI.Button" variant="ghost" size="sm" hint-size="150px,28px">Cambiar categoría</x-import>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4);">
+                <x-import component-from-global-scope="SillarUI.Field" label="Código interno" children="{{ campoCodigo }}" hint-size="100%,64px"></x-import>
+                <x-import component-from-global-scope="SillarUI.Field" label="Código de barras" hint="Si el producto no trae, se deja vacío." error="{{ errorBarras }}" children="{{ campoBarras }}" hint-size="100%,64px"></x-import>
+              </div>
+
+              <div style="display: flex; align-items: flex-end; gap: var(--s5); flex-wrap: wrap;">
+                <div style="width: 180px;">
+                  <x-import component-from-global-scope="SillarUI.Field" label="Precio (S/)" children="{{ campoPrecio }}" hint-size="100%,64px"></x-import>
+                </div>
+                <div style="padding-bottom: var(--s2);">
+                  <x-import component-from-global-scope="SillarUI.Switch" label="Precio a consultar" checked="{{ precioAConsultar }}" onChange="{{ cambiarPrecioAConsultar }}" hint-size="200px,24px"></x-import>
+                </div>
+              </div>
+
+            </div>
+          </x-import>
+
+          <sc-if value="{{ hayVariantes }}" hint-placeholder-val="{{ false }}">
+            <x-import component-from-global-scope="SillarUI.Card" title="Variantes" subtitle="Comparten nombre, foto y precio: lo único que cambia es el código." hint-size="100%,320px">
+              <div style="display: flex; flex-direction: column; gap: var(--s4);">
+                <sc-if value="{{ hayConflictoVariante }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-direction: column; gap: var(--s3);">
+                    <x-import component-from-global-scope="SillarUI.Alert" tone="danger" title="«Rojo» es la única variante activa de un producto activo" hint-size="100%,80px">Dar de baja la última variante dejaría el producto activo y sin nada que vender. Si quieres retirarlo del mostrador, desactiva el producto: sus tres variantes se van con él y ninguna se borra.</x-import>
+                    <div style="display: flex; justify-content: flex-start;">
+                      <x-import component-from-global-scope="SillarUI.Button" variant="secondary" hint-size="200px,36px">Desactivar el producto</x-import>
+                    </div>
+                  </div>
+                </sc-if>
+                <x-import component-from-global-scope="SillarUI.Table" columns="{{ columnasVariantes }}" rows="{{ variantes }}" row-key="{{ claveVariante }}" dimmed="{{ varianteAtenuada }}" hint-size="100%,220px"></x-import>
+              </div>
+            </x-import>
+          </sc-if>
+
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--s5); min-width: 0;">
+
+          <x-import component-from-global-scope="SillarUI.Card" title="Fotos" hint-size="100%,300px">
+            <div style="display: flex; flex-direction: column; gap: var(--s4);">
+              <sc-if value="{{ hayConflictoImagenPlano }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; flex-direction: column; gap: var(--s3); border: 1px solid var(--danger); background: var(--danger-bg); border-radius: var(--r-md); padding: var(--s4);">
+                  <p style="font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--danger);">Diálogo, desplegado para revisión</p>
+                  <p style="font-size: 15px; font-weight: 620; color: var(--text);">Borrar la foto «plumon-azul.jpg»</p>
+                  <p style="font-size: 14px; color: var(--text-muted);">Si esta imagen está en uso, desaparecerá de donde esté.</p>
+                  <div style="display: flex; justify-content: flex-end; gap: var(--s2);">
+                    <x-import component-from-global-scope="SillarUI.Button" variant="secondary" hint-size="100px,36px">Cancelar</x-import>
+                    <x-import component-from-global-scope="SillarUI.Button" variant="danger" hint-size="130px,36px">Borrar imagen</x-import>
+                  </div>
+                </div>
+              </sc-if>
+              <x-import component-from-global-scope="SillarUI.Gallery" items="{{ fotos }}" item-key="{{ claveFoto }}" render="{{ pintarFoto }}" empty="{{ fotosVacias }}" hint-size="100%,200px"></x-import>
+              <div style="display: flex; justify-content: flex-start;">
+                <x-import component-from-global-scope="SillarUI.Button" variant="secondary" size="sm" hint-size="130px,32px">Subir una foto</x-import>
+              </div>
+            </div>
+          </x-import>
+
+          <sc-if value="{{ hayEstadoCard }}" hint-placeholder-val="{{ true }}">
+            <x-import component-from-global-scope="SillarUI.Card" title="Estado" hint-size="100%,180px">
+              <div style="display: flex; flex-direction: column; gap: var(--s3);">
+                <x-import component-from-global-scope="SillarUI.Switch" label="Producto activo" checked="{{ activo }}" onChange="{{ cambiarActivo }}" hint-size="180px,24px"></x-import>
+                <p style="font-size: 13px; color: var(--text-muted); text-wrap: pretty;">Un producto dado de baja deja de aparecer en el mostrador, pero se queda aquí con su historial. No se borra nada.</p>
+                <sc-if value="{{ hayBorrarFoto }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; justify-content: flex-start; padding-top: var(--s2); border-top: 1px solid var(--border);">
+                    <x-import component-from-global-scope="SillarUI.Button" variant="ghost" size="sm" onClick="{{ pedirBorrarFoto }}" hint-size="160px,28px">Borrar la primera foto</x-import>
+                  </div>
+                </sc-if>
+              </div>
+            </x-import>
+          </sc-if>
+
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hayDialogoImagen }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="SillarUI.ConfirmDialog" open="{{ true }}" title="Borrar la foto «plumon-azul.jpg»" confirm-label="Borrar imagen" danger="{{ true }}" onConfirm="{{ cerrarDialogo }}" onCancel="{{ cerrarDialogo }}" hint-size="0,0">
+        <p>Si esta imagen está en uso, desaparecerá de donde esté.</p>
+      </x-import>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1120,&quot;height&quot;:900},&quot;estado&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;vacio&quot;,&quot;datos&quot;,&quot;cargando&quot;,&quot;conflicto&quot;],&quot;default&quot;:&quot;datos&quot;,&quot;tsType&quot;:&quot;'vacio' | 'datos' | 'cargando' | 'conflicto'&quot;},&quot;tema&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;claro&quot;,&quot;oscuro&quot;],&quot;default&quot;:&quot;claro&quot;,&quot;tsType&quot;:&quot;'claro' | 'oscuro'&quot;},&quot;caso&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;codigo&quot;,&quot;variante&quot;,&quot;imagen&quot;],&quot;default&quot;:&quot;codigo&quot;,&quot;tsType&quot;:&quot;'codigo' | 'variante' | 'imagen'&quot;,&quot;section&quot;:&quot;Conflicto&quot;},&quot;compacto&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;interactivo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { activo: true, precioAConsultar: false, dialogo: false };
+
+  campo(props, extra) {
+    const S = window.SillarUI || {};
+    return React.createElement(S.Input, Object.assign({}, props, extra));
+  }
+
+  renderVals() {
+    const R = React;
+    const p = this.props;
+    const estado = p.estado || 'datos';
+    const compacto = !!p.compacto;
+    const interactivo = !!p.interactivo;
+    const conflicto = estado === 'conflicto';
+    const caso = p.caso || 'codigo';
+    const nuevo = estado === 'vacio';
+
+    const S = () => window.SillarUI || {};
+
+    const variantes = [
+      { clave: 'az', color: 'Azul', codigo: 'PLU-ART-PG-AZ', activa: !(conflicto && caso === 'variante') },
+      { clave: 'ne', color: 'Negro', codigo: 'PLU-ART-PG-NE', activa: !(conflicto && caso === 'variante') },
+      { clave: 'ro', color: 'Rojo', codigo: 'PLU-ART-PG-RO', activa: true }
+    ];
+
+    const columnasVariantes = [
+      { key: 'color', header: 'Color', render: (v) => R.createElement('span', { style: { fontWeight: 560 } }, v.color) },
+      { key: 'codigo', header: 'Código', render: (v) => R.createElement('span', { style: { fontFamily: 'var(--mono)', fontSize: 12.5 } }, v.codigo) },
+      { key: 'estado', header: 'Estado', render: (v) => R.createElement(S().Badge, { tone: v.activa ? 'success' : 'neutral' }, v.activa ? 'Activa' : 'Dada de baja') },
+      { key: 'acciones', header: '', align: 'right', render: (v) => R.createElement(S().Button, { variant: 'ghost', size: 'sm' }, v.activa ? 'Dar de baja' : 'Reactivar') }
+    ];
+
+    const fotos = nuevo ? [] : [
+      { clave: 'f1', nombre: 'plumon-azul.jpg' },
+      { clave: 'f2', nombre: 'plumon-mostrador.jpg' },
+      { clave: 'f3', nombre: 'plumon-recambio.jpg' }
+    ];
+
+    const pintarFoto = (foto) => R.createElement('div', { className: 'gal__item' },
+      R.createElement('div', { className: 'gal__thumb' },
+        R.createElement('span', { style: { fontSize: 12, color: 'var(--text-subtle)' } }, 'Foto')
+      ),
+      R.createElement('div', { className: 'gal__body' },
+        R.createElement('span', { className: 'gal__name' }, foto.nombre),
+        R.createElement('div', { className: 'gal__foot' },
+          R.createElement('span', { className: 'gal__meta' }, foto.clave === 'f1' ? 'Principal' : ''),
+          R.createElement(S().Button, { variant: 'ghost', size: 'sm', onClick: () => this.setState({ dialogo: true }) }, 'Borrar')
+        )
+      )
+    );
+
+    const fotosVacias = R.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 'var(--s1)', padding: 'var(--s5) 0', textAlign: 'center', color: 'var(--text-muted)' } },
+      R.createElement('p', { style: { fontSize: 14, fontWeight: 600, color: 'var(--text)' } }, 'Sin fotos todavía'),
+      R.createElement('p', { style: { fontSize: 13.5 } }, 'La foto es lo que se reconoce de un golpe en el mostrador.')
+    );
+
+    const conflictoCodigo = conflicto && caso === 'codigo';
+
+    return {
+      temaAttr: p.tema === 'oscuro' ? 'dark' : 'light',
+      titulo: nuevo ? 'Nuevo producto' : (estado === 'cargando' ? 'Producto' : 'Plumón de pizarra recargable Artesco punta gruesa'),
+      etiquetaGuardar: nuevo ? 'Guardar producto' : 'Guardar cambios',
+      categoria: nuevo ? 'Sin categoría' : 'Escritura y correctores',
+      rejilla: compacto ? '1fr' : 'minmax(0, 1.35fr) minmax(0, 1fr)',
+      estaCargando: estado === 'cargando',
+      hayFormulario: estado !== 'cargando',
+      hayGuardar: estado !== 'cargando',
+      hayEstadoCabecera: !nuevo && estado !== 'cargando',
+      hayEstadoCard: !nuevo,
+      hayVariantes: !nuevo,
+      hayConflictoCodigo: conflictoCodigo,
+      hayConflictoVariante: conflicto && caso === 'variante',
+      hayConflictoImagenPlano: conflicto && caso === 'imagen' && !interactivo,
+      hayDialogoImagen: interactivo && !this.state.cerrado && (this.state.dialogo || (conflicto && caso === 'imagen')),
+      hayBorrarFoto: interactivo && !nuevo,
+      pedirBorrarFoto: () => this.setState({ dialogo: true, cerrado: false }),
+      cerrarDialogo: () => this.setState({ dialogo: false, cerrado: true }),
+      errorBarras: conflictoCodigo ? 'En uso por «Cuaderno universitario cuadriculado Stanford A4 100 hojas»' : null,
+      campoNombre: (a) => this.campo(a, { defaultValue: nuevo ? '' : 'Plumón de pizarra recargable Artesco punta gruesa', placeholder: 'Cuaderno universitario cuadriculado Stanford A4 100 hojas' }),
+      campoCodigo: (a) => this.campo(a, { defaultValue: nuevo ? '' : 'PLU-ART-PG', placeholder: 'CUA-STF-A4' }),
+      campoBarras: (a) => this.campo(a, { defaultValue: nuevo ? '' : '7751234500028', placeholder: '7751234500011', invalid: conflictoCodigo }),
+      campoPrecio: (a) => this.campo(a, { defaultValue: nuevo ? '' : '4.90', placeholder: '0.00', disabled: this.state.precioAConsultar }),
+      precioAConsultar: this.state.precioAConsultar,
+      cambiarPrecioAConsultar: (v) => this.setState({ precioAConsultar: v }),
+      activo: this.state.activo,
+      cambiarActivo: (v) => this.setState({ activo: v }),
+      variantes,
+      columnasVariantes,
+      claveVariante: (v) => v.clave,
+      varianteAtenuada: (v) => !v.activa,
+      fotos,
+      claveFoto: (f) => f.clave,
+      pintarFoto,
+      fotosVacias
+    };
+  }
+}
+
+</script>
+</body>
+</html>

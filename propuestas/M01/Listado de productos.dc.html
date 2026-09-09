@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/sillar-ui-25e4271c-0565-4ef0-832f-a8eba6ce38e5/styles.css">
+  <link rel="stylesheet" href="harness.css">
+  <script src="_ds/sillar-ui-25e4271c-0565-4ef0-832f-a8eba6ce38e5/_ds_bundle.js"></script>
+</helmet>
+<div data-theme="{{ temaAttr }}" data-screen-label="Listado de productos" style="background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100%; display: flex; flex-direction: column;">
+  <div style="display: flex; flex-direction: column; gap: var(--s5); padding: var(--s6); max-width: 1120px; width: 100%; margin: 0 auto;">
+
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s4); flex-wrap: wrap;">
+      <div style="display: flex; flex-direction: column; gap: var(--s1);">
+        <p style="font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-subtle);">Catálogo</p>
+        <h1 style="font-size: 26px;">Productos</h1>
+        <sc-if value="{{ hayResumen }}" hint-placeholder-val="{{ true }}">
+          <p style="font-size: 13.5px; color: var(--text-muted); white-space: nowrap;">{{ resumen }}</p>
+        </sc-if>
+      </div>
+      <sc-if value="{{ hayAcciones }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; gap: var(--s2); align-items: center;">
+          <x-import component-from-global-scope="SillarUI.Button" variant="secondary" onClick="{{ abrirCategorias }}" hint-size="120px,36px">Categorías</x-import>
+          <x-import component-from-global-scope="SillarUI.Button" hint-size="150px,36px">Nuevo producto</x-import>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ hayConflictoPlano }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: var(--s3); border: 1px solid var(--warning); background: var(--warning-bg); border-radius: var(--r-md); padding: var(--s4);">
+        <p style="font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--warning);">Diálogo, desplegado para revisión</p>
+        <p style="font-size: 15px; font-weight: 620; color: var(--text);">Desactivar la categoría «Cuadernos y papel»</p>
+        <p style="font-size: 14px; color: var(--text-muted);">23 productos se quedan sin categoría y siguen activos: no se desactiva ninguno.</p>
+        <p style="font-size: 14px; color: var(--text-muted);">Podrás volver a activar la categoría o asignarles otra cuando quieras.</p>
+        <div style="display: flex; justify-content: flex-end; gap: var(--s2);">
+          <x-import component-from-global-scope="SillarUI.Button" variant="secondary" hint-size="100px,36px">Cancelar</x-import>
+          <x-import component-from-global-scope="SillarUI.Button" hint-size="180px,36px">Desactivar categoría</x-import>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hayFiltros }}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; align-items: center; gap: var(--s4); flex-wrap: wrap;">
+        <div style="flex: 1 1 260px; max-width: 380px;">
+          <x-import component-from-global-scope="SillarUI.Input" placeholder="Buscar por nombre o código" disabled="{{ filtrosInertes }}" hint-size="100%,36px"></x-import>
+        </div>
+        <x-import component-from-global-scope="SillarUI.Switch" label="Mostrar los dados de baja" checked="{{ verBajas }}" onChange="{{ cambiarVerBajas }}" disabled="{{ filtrosInertes }}" hint-size="220px,24px"></x-import>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ estaVacio }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="SillarUI.Card" hint-size="100%,300px">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: var(--s4); padding: var(--s5) var(--s4);">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: var(--s2); text-align: center; max-width: 52ch;">
+            <p style="font-size: 17px; font-weight: 620; color: var(--text);">Todavía no hay ningún producto</p>
+            <p style="font-size: 14px; color: var(--text-muted); text-wrap: pretty;">Un producto es cada cosa que vendes en el mostrador: su nombre, su código, su precio y su foto. Por ejemplo «Cuaderno universitario cuadriculado Stanford A4 100 hojas».</p>
+            <p style="font-size: 14px; color: var(--text-muted); text-wrap: pretty;">Cuando exista el primero podrás corregir sus datos, cambiarle el precio, subirle fotos y darlo de baja sin borrarlo del historial.</p>
+          </div>
+          <x-import component-from-global-scope="SillarUI.Button" size="lg" hint-size="220px,44px">Crear el primer producto</x-import>
+        </div>
+      </x-import>
+    </sc-if>
+
+    <sc-if value="{{ hayTabla }}" hint-placeholder-val="{{ true }}">
+      <x-import component-from-global-scope="SillarUI.Table" columns="{{ columnas }}" rows="{{ filas }}" row-key="{{ clave }}" dimmed="{{ atenuada }}" loading="{{ estaCargando }}" empty="{{ nada }}" hint-size="100%,420px"></x-import>
+    </sc-if>
+
+    <sc-if value="{{ hayDialogo }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="SillarUI.ConfirmDialog" open="{{ true }}" title="Desactivar la categoría «Cuadernos y papel»" confirmLabel="Desactivar categoría" onConfirm="{{ cerrarDialogo }}" onCancel="{{ cerrarDialogo }}" hint-size="0,0">
+        <p>23 productos se quedan sin categoría y siguen activos: no se desactiva ninguno.</p>
+        <p>Podrás volver a activar la categoría o asignarles otra cuando quieras.</p>
+      </x-import>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1120,&quot;height&quot;:760},&quot;estado&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;vacio&quot;,&quot;datos&quot;,&quot;cargando&quot;,&quot;conflicto&quot;],&quot;default&quot;:&quot;datos&quot;,&quot;tsType&quot;:&quot;'vacio' | 'datos' | 'cargando' | 'conflicto'&quot;},&quot;tema&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;claro&quot;,&quot;oscuro&quot;],&quot;default&quot;:&quot;claro&quot;,&quot;tsType&quot;:&quot;'claro' | 'oscuro'&quot;},&quot;compacto&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;interactivo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { verBajas: true, dialogo: true };
+
+  productos() {
+    return [
+      { clave: 'cua', nombre: 'Cuaderno universitario cuadriculado Stanford A4 100 hojas', codigo: 'CUA-STF-A4', barras: '7751234500011', precio: 'S/ 12.50', activo: true },
+      { clave: 'plu', nombre: 'Plumón de pizarra recargable Artesco punta gruesa', variantes: '3 variantes: azul, negro, rojo', codigo: 'PLU-ART-PG-AZ', codigoNota: 'y 2 códigos más', barras: '7751234500028', precio: 'S/ 4.90', activo: true },
+      { clave: 'pap', nombre: 'Papel bond fotocopia Report A4 75 g', codigo: 'PAP-RPT-A4', sinBarras: true, precio: 'S/ 24.90', activo: true },
+      { clave: 'moc', nombre: 'Mochila escolar reforzada Wonder 18 pulgadas', codigo: 'MOC-WON-18', barras: '7751234500042', sinPrecio: true, activo: true },
+      { clave: 'cal', nombre: 'Calculadora científica Casio fx-82 solar', codigo: 'CAL-CAS-82', barras: '7751234500066', precio: 'S/ 79.00', activo: true },
+      { clave: 'cor', nombre: 'Corrector líquido Vinifan punta metálica 20 ml', codigo: 'COR-VIN-20', barras: '7751234500073', precio: 'S/ 3.50', activo: true },
+      { clave: 'tem', nombre: 'Témperas escolares Faber-Castell 7 colores', codigo: 'TEM-FBC-07', barras: '7751234500059', precio: 'S/ 9.90', activo: false }
+    ];
+  }
+
+  celdaNombre(fila, compacto) {
+    const R = React, S = window.SillarUI || {};
+    const lineas = [R.createElement('span', { key: 'n', style: { fontWeight: 560, color: 'var(--text)' } }, fila.nombre)];
+    if (fila.variantes) {
+      lineas.push(R.createElement('span', { key: 'v', style: { fontSize: 12.5, color: 'var(--text-subtle)' } }, fila.variantes));
+    }
+    if (compacto) {
+      lineas.push(R.createElement('span', { key: 'c', style: { fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-muted)' } }, fila.codigo));
+      lineas.push(R.createElement('div', { key: 'p', style: { display: 'flex', alignItems: 'center', gap: 'var(--s2)', marginTop: 2 } },
+        fila.sinPrecio
+          ? R.createElement('span', { style: { fontSize: 13, color: 'var(--text-subtle)' } }, 'Precio a consultar')
+          : R.createElement('span', { style: { fontSize: 14, fontWeight: 560 } }, fila.precio),
+        fila.activo ? null : R.createElement(S.Badge, { tone: 'neutral' }, 'Dado de baja')
+      ));
+    }
+    return R.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 2, maxWidth: compacto ? 220 : 420 } }, lineas);
+  }
+
+  renderVals() {
+    const R = React;
+    const p = this.props;
+    const estado = p.estado || 'datos';
+    const compacto = !!p.compacto;
+    const interactivo = !!p.interactivo;
+
+    const columnas = compacto
+      ? [
+          { key: 'producto', header: 'Producto', render: (f) => this.celdaNombre(f, true) },
+          { key: 'acciones', header: '', align: 'right', render: () => R.createElement((window.SillarUI || {}).Button, { variant: 'ghost', size: 'sm' }, 'Editar') }
+        ]
+      : [
+          { key: 'producto', header: 'Producto', render: (f) => this.celdaNombre(f, false) },
+          {
+            key: 'codigos', header: 'Códigos', render: (f) => R.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 2 } },
+              R.createElement('span', { style: { fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--text)' } }, f.codigo),
+              f.sinBarras
+                ? R.createElement('span', { style: { fontSize: 12, color: 'var(--text-subtle)' } }, 'Sin código de barras')
+                : R.createElement('span', { style: { fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-subtle)' } }, f.barras),
+              f.codigoNota ? R.createElement('span', { style: { fontSize: 12, color: 'var(--text-subtle)' } }, f.codigoNota) : null
+            )
+          },
+          {
+            key: 'precio', header: 'Precio', align: 'right', render: (f) => f.sinPrecio
+              ? R.createElement('span', { style: { fontSize: 13.5, color: 'var(--text-subtle)' } }, 'A consultar')
+              : R.createElement('span', { style: { fontWeight: 560 } }, f.precio)
+          },
+          {
+            key: 'estado', header: 'Estado', render: (f) => R.createElement((window.SillarUI || {}).Badge, { tone: f.activo ? 'success' : 'neutral' }, f.activo ? 'Activo' : 'Dado de baja')
+          },
+          { key: 'acciones', header: '', align: 'right', render: () => R.createElement((window.SillarUI || {}).Button, { variant: 'ghost', size: 'sm' }, 'Editar') }
+        ];
+
+    const todas = this.productos();
+    const filas = estado === 'cargando' ? [] : (this.state.verBajas ? todas : todas.filter((f) => f.activo));
+    const conflicto = estado === 'conflicto';
+
+    return {
+      temaAttr: p.tema === 'oscuro' ? 'dark' : 'light',
+      estaVacio: estado === 'vacio',
+      estaCargando: estado === 'cargando',
+      hayTabla: estado !== 'vacio',
+      hayResumen: estado === 'datos' || conflicto,
+      resumen: (() => {
+        const activos = filas.filter((f) => f.activo).length;
+        const bajas = filas.length - activos;
+        const partes = [filas.length === 1 ? '1 producto' : filas.length + ' productos'];
+        partes.push(activos === 1 ? '1 activo' : activos + ' activos');
+        if (bajas === 1) partes.push('1 dado de baja');
+        else if (bajas > 1) partes.push(bajas + ' dados de baja');
+        return partes.join(' · ');
+      })(),
+      hayAcciones: estado !== 'vacio',
+      hayFiltros: estado !== 'vacio',
+      filtrosInertes: estado === 'cargando',
+      hayDialogo: conflicto && interactivo && this.state.dialogo,
+      hayConflictoPlano: conflicto && !interactivo,
+      verBajas: this.state.verBajas,
+      cambiarVerBajas: (v) => this.setState({ verBajas: v }),
+      abrirCategorias: () => this.setState({ dialogo: true }),
+      cerrarDialogo: () => this.setState({ dialogo: false }),
+      columnas,
+      filas,
+      clave: (f) => f.clave,
+      atenuada: (f) => !f.activo,
+      nada: null
+    };
+  }
+}
+
+</script>
+</body>
+</html>

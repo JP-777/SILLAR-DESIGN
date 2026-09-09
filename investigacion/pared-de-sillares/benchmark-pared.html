@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<title>Medición pared de sillares</title>
+<style>
+  :root {
+    --bg: Canvas;
+    --bg-raised: Canvas;
+    --text: CanvasText;
+    --text-muted: CanvasText;
+    --text-subtle: CanvasText;
+    --border-strong: CanvasText;
+    --s1: .25rem;
+    --s5: 1.25rem;
+    --s6: 1.5rem;
+    --r-sm: .25rem;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+</style>
+<link rel="stylesheet" href="pared-de-sillares-espera.css">
+<div class="pared-espera" data-estado="esperando">
+  <div class="pared-espera__contenido">
+    <div class="pared-espera__muro" aria-hidden="true" id="muro"></div>
+    <p class="pared-espera__mensaje" role="status">Esperando que el sistema vuelva a estar disponible</p>
+  </div>
+</div>
+<script>
+  const muro = document.querySelector('#muro');
+  [5, 4, 5, 4, 5].forEach((cantidad, fila) => {
+    const elementoFila = document.createElement('div');
+    elementoFila.className = 'pared-espera__fila';
+    for (let columna = 0; columna < cantidad; columna += 1) {
+      const sillar = document.createElement('span');
+      sillar.className = 'pared-espera__sillar';
+      sillar.style.setProperty('--retraso-sillar', (4 - fila) * 280 + columna * 36);
+      elementoFila.append(sillar);
+    }
+    muro.append(elementoFila);
+  });
+  for (const variante of ['uno', 'dos']) {
+    const polvo = document.createElement('span');
+    polvo.className = `pared-espera__polvo pared-espera__polvo--${variante}`;
+    muro.append(polvo);
+  }
+
+  const intervalos = [];
+  const tareasLargas = [];
+  let anterior = performance.now();
+  const inicio = anterior;
+
+  try {
+    new PerformanceObserver((lista) => {
+      for (const entrada of lista.getEntries()) tareasLargas.push(entrada.duration);
+    }).observe({ type: 'longtask', buffered: true });
+  } catch {}
+
+  function fotograma(ahora) {
+    intervalos.push(ahora - anterior);
+    anterior = ahora;
+    if (ahora - inicio < 6000) requestAnimationFrame(fotograma);
+  }
+  requestAnimationFrame(fotograma);
+
+  setTimeout(() => {
+    const muestras = intervalos.slice(5).sort((a, b) => a - b);
+    const percentil = (p) => muestras[Math.min(muestras.length - 1, Math.floor(muestras.length * p))];
+    window.__resultado = {
+      fotogramas: muestras.length,
+      intervaloMedianoMs: percentil(.5),
+      intervaloP95Ms: percentil(.95),
+      intervalosMayores20Ms: muestras.filter((valor) => valor > 20).length,
+      intervalosMayores33Ms: muestras.filter((valor) => valor > 33).length,
+      tareasLargas: tareasLargas.length,
+      totalTareasLargasMs: tareasLargas.reduce((total, valor) => total + valor, 0),
+      movimientoReducido: matchMedia('(prefers-reduced-motion: reduce)').matches,
+      sillares: document.querySelectorAll('.pared-espera__sillar').length,
+    };
+    document.documentElement.dataset.resultado = JSON.stringify(window.__resultado);
+  }, 6200);
+</script>
+</html>

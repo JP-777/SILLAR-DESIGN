@@ -1,0 +1,16 @@
+.ejemplo-animacion-css {
+  opacity: 1;
+  transform: none;
+}
+
+:root[data-animaciones-ocasionales='permitidas']
+  .ejemplo-animacion-css[data-activa='true'] {
+  animation: ejemplo-entrada-ocasional 10s cubic-bezier(.2, 0, .4, 1) both;
+}
+
+@keyframes ejemplo-entrada-ocasional {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 4rem, 0);
+  }
+}

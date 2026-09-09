@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/sillar-ui-25e4271c-0565-4ef0-832f-a8eba6ce38e5/styles.css">
+  <link rel="stylesheet" href="harness.css">
+  <script src="_ds/sillar-ui-25e4271c-0565-4ef0-832f-a8eba6ce38e5/_ds_bundle.js"></script>
+</helmet>
+<div data-theme="light" style="background: var(--bg-sunken); color: var(--text); font-family: var(--font); min-height: 100%; padding: var(--s6) var(--s6) var(--s8);">
+  <div style="display: flex; flex-direction: column; gap: var(--s8); max-width: 1640px; margin: 0 auto;">
+
+    <div style="display: flex; flex-direction: column; gap: var(--s3); max-width: 74ch;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-subtle);">SILLAR · Módulo Catálogo · rol Editor</p>
+      <h1 style="font-size: 30px;">Productos: listado y detalle, en sus cuatro estados</h1>
+      <p style="font-size: 15px; color: var(--text-muted); text-wrap: pretty;">Datos de una librería y bazar de ejemplo, inventados. Incluyen a propósito los casos incómodos: un producto sin código de barras, uno con precio a consultar y uno con tres variantes que solo se diferencian en el código. Abajo, el banco para ver las transiciones; después, el tablero para revisar de un vistazo.</p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: var(--s4);">
+      <div style="display: flex; align-items: baseline; gap: var(--s3);">
+        <h2 style="font-size: 20px;">Banco de pruebas</h2>
+        <p style="font-size: 13.5px; color: var(--text-muted);">Los conmutadores mueven la pantalla de verdad: el conflicto que es un diálogo se abre como diálogo, con su foco visible.</p>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--s5); padding: var(--s4); background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow);">
+        <div style="display: flex; flex-direction: column; gap: var(--s2);">
+          <span style="font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-subtle);">Pantalla</span>
+          <div style="display: flex; gap: var(--s2);">
+            <x-import component-from-global-scope="SillarUI.Button" size="sm" variant="{{ vListado }}" onClick="{{ verListado }}" hint-size="80px,28px">Listado</x-import>
+            <x-import component-from-global-scope="SillarUI.Button" size="sm" variant="{{ vDetalle }}" onClick="{{ verDetalle }}" hint-size="80px,28px">Detalle</x-import>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--s2);">
+          <span style="font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-subtle);">Estado</span>
+          <div style="display: flex; gap: var(--s2);">
+            <x-import component-from-global-scope="SillarUI.Button" size="sm" variant="{{ vVacio }}" onClick="{{ verVacio }}" hint-size="70px,28px">Vacío</x-import>
+            <x-import component-from-global-scope="SillarUI.Button" size="sm" variant="{{ vDatos }}" onClick="{{ verDatos }}" hint-size="90px,28px">Con datos</x-import>
+            <x-import component-from-global-scope="SillarUI.Button" size="sm" variant="{{ vCargando }}" onClick="{{ verCargando }}" hint-size="90px,28px">Cargando</x-import>
+            <x-import component-from-global-scope="SillarUI.Button" size="sm" variant="{{ vConflicto }}" onClick="{{ verConflicto }}" hint-size="90px,28px">Conflicto</x-import>
+          </div>
+        </div>
+        <sc-if value="{{ hayCasos }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: var(--s2);">
+            <span style="font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-subtle);">Qué lo impide</span>
+            <div style="display: flex; gap: var(--s2);">
+              <x-import component-from-global-scope="SillarUI.Button" size="sm" variant="{{ vCodigo }}" onClick="{{ verCodigo }}" hint-size="120px,28px">Código repetido</x-import>
+              <x-import component-from-global-scope="SillarUI.Button" size="sm" variant="{{ vVariante }}" onClick="{{ verVariante }}" hint-size="140px,28px">Última variante activa</x-import>
+              <x-import component-from-global-scope="SillarUI.Button" size="sm" variant="{{ vImagen }}" onClick="{{ verImagen }}" hint-size="120px,28px">Borrar una foto</x-import>
+            </div>
+          </div>
+        </sc-if>
+        <div style="display: flex; gap: var(--s5); margin-left: auto;">
+          <x-import component-from-global-scope="SillarUI.Switch" label="Tema oscuro" checked="{{ oscuro }}" onChange="{{ cambiarOscuro }}" hint-size="140px,24px"></x-import>
+          <x-import component-from-global-scope="SillarUI.Switch" label="Vista móvil" checked="{{ movil }}" onChange="{{ cambiarMovil }}" hint-size="130px,24px"></x-import>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: center; padding: var(--s5); background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--r-lg);">
+        <div style="width: {{ anchoBanco }}; max-width: 100%; border: 1px solid var(--border-strong); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-lg);">
+          <sc-if value="{{ esListado }}" hint-placeholder-val="{{ true }}">
+            <dc-import name="Listado de productos" estado="{{ estado }}" tema="{{ tema }}" compacto="{{ movil }}" interactivo="{{ true }}" hint-size="100%,720px"></dc-import>
+          </sc-if>
+          <sc-if value="{{ esDetalle }}" hint-placeholder-val="{{ false }}">
+            <dc-import name="Detalle de producto" estado="{{ estado }}" tema="{{ tema }}" caso="{{ caso }}" compacto="{{ movil }}" interactivo="{{ true }}" hint-size="100%,900px"></dc-import>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: var(--s5);">
+      <div style="display: flex; align-items: baseline; gap: var(--s3);">
+        <h2 style="font-size: 20px;">Tablero · Listado de productos</h2>
+        <p style="font-size: 13.5px; color: var(--text-muted);">Escritorio, 1280 px. Arriba claro, abajo oscuro.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: var(--s5);">
+
+        <div style="display: flex; flex-direction: column; gap: var(--s3); width: 384px;">
+          <div style="display: flex; flex-direction: column; gap: var(--s1);">
+            <h3 style="font-size: 15px;">Vacío</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); text-wrap: pretty;">Dice qué es un producto aquí y qué se podrá hacer. Una sola acción, y nada de buscador ni filtros que no tendrían nada que filtrar.</p>
+          </div>
+          <div style="height: 264px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 880px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Listado de productos" estado="vacio" tema="claro" style="height: 880px; display: block;" hint-size="1280px,880px"></dc-import>
+            </div>
+          </div>
+          <div style="height: 264px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 880px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Listado de productos" estado="vacio" tema="oscuro" style="height: 880px; display: block;" hint-size="1280px,880px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--s3); width: 384px;">
+          <div style="display: flex; flex-direction: column; gap: var(--s1);">
+            <h3 style="font-size: 15px;">Con datos</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); text-wrap: pretty;">Sin código de barras, precio a consultar, tres códigos en una fila y un dado de baja atenuado, no escondido.</p>
+          </div>
+          <div style="height: 264px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 880px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Listado de productos" estado="datos" tema="claro" style="height: 880px; display: block;" hint-size="1280px,880px"></dc-import>
+            </div>
+          </div>
+          <div style="height: 264px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 880px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Listado de productos" estado="datos" tema="oscuro" style="height: 880px; display: block;" hint-size="1280px,880px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--s3); width: 384px;">
+          <div style="display: flex; flex-direction: column; gap: var(--s1);">
+            <h3 style="font-size: 15px;">Cargando</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); text-wrap: pretty;">La cabecera y la tabla se quedan donde están; el recuento no aparece hasta saberlo y los filtros no se pueden tocar.</p>
+          </div>
+          <div style="height: 264px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 880px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Listado de productos" estado="cargando" tema="claro" style="height: 880px; display: block;" hint-size="1280px,880px"></dc-import>
+            </div>
+          </div>
+          <div style="height: 264px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 880px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Listado de productos" estado="cargando" tema="oscuro" style="height: 880px; display: block;" hint-size="1280px,880px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--s3); width: 384px;">
+          <div style="display: flex; flex-direction: column; gap: var(--s1);">
+            <h3 style="font-size: 15px;">Conflicto</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); text-wrap: pretty;">Desactivar una categoría con productos: se permite, avisa cuántos quedan sin ella y no desactiva ninguno. Aquí el diálogo va desplegado para poder leerlo; en el banco sale como diálogo.</p>
+          </div>
+          <div style="height: 264px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 880px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Listado de productos" estado="conflicto" tema="claro" style="height: 880px; display: block;" hint-size="1280px,880px"></dc-import>
+            </div>
+          </div>
+          <div style="height: 264px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 880px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Listado de productos" estado="conflicto" tema="oscuro" style="height: 880px; display: block;" hint-size="1280px,880px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: var(--s5);">
+      <div style="display: flex; align-items: baseline; gap: var(--s3);">
+        <h2 style="font-size: 20px;">Tablero · Detalle de producto</h2>
+        <p style="font-size: 13.5px; color: var(--text-muted);">El producto con tres variantes. En el estado vacío —un producto nuevo— la palabra «variantes» no aparece.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: var(--s5);">
+
+        <div style="display: flex; flex-direction: column; gap: var(--s3); width: 384px;">
+          <div style="display: flex; flex-direction: column; gap: var(--s1);">
+            <h3 style="font-size: 15px;">Vacío</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); text-wrap: pretty;">Producto nuevo: sin fotos, sin estado que enseñar y sin variantes, porque todavía no hay ninguna.</p>
+          </div>
+          <div style="height: 528px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 1760px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Detalle de producto" estado="vacio" tema="claro" style="height: 1760px; display: block;" hint-size="1280px,1760px"></dc-import>
+            </div>
+          </div>
+          <div style="height: 528px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 1760px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Detalle de producto" estado="vacio" tema="oscuro" style="height: 1760px; display: block;" hint-size="1280px,1760px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--s3); width: 384px;">
+          <div style="display: flex; flex-direction: column; gap: var(--s1);">
+            <h3 style="font-size: 15px;">Con datos</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); text-wrap: pretty;">Tres variantes que comparten nombre, foto y precio: la tabla solo enseña lo que las distingue, el código.</p>
+          </div>
+          <div style="height: 528px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 1760px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Detalle de producto" estado="datos" tema="claro" style="height: 1760px; display: block;" hint-size="1280px,1760px"></dc-import>
+            </div>
+          </div>
+          <div style="height: 528px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 1760px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Detalle de producto" estado="datos" tema="oscuro" style="height: 1760px; display: block;" hint-size="1280px,1760px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--s3); width: 384px;">
+          <div style="display: flex; flex-direction: column; gap: var(--s1);">
+            <h3 style="font-size: 15px;">Cargando</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); text-wrap: pretty;">Ni nombre ni estado inventados mientras no se sepan: un solo indicador y el título genérico.</p>
+          </div>
+          <div style="height: 528px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 1760px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Detalle de producto" estado="cargando" tema="claro" style="height: 1760px; display: block;" hint-size="1280px,1760px"></dc-import>
+            </div>
+          </div>
+          <div style="height: 528px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 1760px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Detalle de producto" estado="cargando" tema="oscuro" style="height: 1760px; display: block;" hint-size="1280px,1760px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--s3); width: 384px;">
+          <div style="display: flex; flex-direction: column; gap: var(--s1);">
+            <h3 style="font-size: 15px;">Conflicto</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); text-wrap: pretty;">Código de barras repetido: el mensaje dice cuál de los dos códigos chocó y con qué producto. Los otros dos conflictos están en el banco.</p>
+          </div>
+          <div style="height: 528px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 1760px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Detalle de producto" estado="conflicto" caso="codigo" tema="claro" style="height: 1760px; display: block;" hint-size="1280px,1760px"></dc-import>
+            </div>
+          </div>
+          <div style="height: 528px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 1280px; height: 1760px; display: flex; transform: scale(.3); transform-origin: top left;">
+              <dc-import name="Detalle de producto" estado="conflicto" caso="codigo" tema="oscuro" style="height: 1760px; display: block;" hint-size="1280px,1760px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <sc-if value="{{ hayTableroMovil }}" hint-placeholder-val="{{ true }}">
+    <div style="display: flex; flex-direction: column; gap: var(--s5);">
+      <div style="display: flex; align-items: baseline; gap: var(--s3);">
+        <h2 style="font-size: 20px;">Móvil, solo donde cambia algo</h2>
+        <p style="font-size: 13.5px; color: var(--text-muted);">390 px. El panel se usa sentado; esto es para cuando toca mirarlo de pie.</p>
+      </div>
+      <div style="display: flex; gap: var(--s5); flex-wrap: wrap;">
+
+        <div style="display: flex; flex-direction: column; gap: var(--s3); width: 273px;">
+          <p style="font-size: 12.5px; color: var(--text-muted); text-wrap: pretty;">Vacío: el mismo texto, en una columna.</p>
+          <div style="height: 504px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 390px; height: 720px; display: flex; transform: scale(.7); transform-origin: top left;">
+              <dc-import name="Listado de productos" estado="vacio" tema="claro" compacto="{{ true }}" style="height: 720px; display: block;" hint-size="390px,720px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--s3); width: 273px;">
+          <p style="font-size: 12.5px; color: var(--text-muted); text-wrap: pretty;">Con datos: la fila se apila —nombre, código, precio y estado— y solo queda «Editar».</p>
+          <div style="height: 504px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 390px; height: 720px; display: flex; transform: scale(.7); transform-origin: top left;">
+              <dc-import name="Listado de productos" estado="datos" tema="claro" compacto="{{ true }}" style="height: 720px; display: block;" hint-size="390px,720px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--s3); width: 273px;">
+          <p style="font-size: 12.5px; color: var(--text-muted); text-wrap: pretty;">Con datos, oscuro: la atenuación del dado de baja tiene que seguir leyéndose.</p>
+          <div style="height: 504px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 390px; height: 720px; display: flex; transform: scale(.7); transform-origin: top left;">
+              <dc-import name="Listado de productos" estado="datos" tema="oscuro" compacto="{{ true }}" style="height: 720px; display: block;" hint-size="390px,720px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--s3); width: 273px;">
+          <p style="font-size: 12.5px; color: var(--text-muted); text-wrap: pretty;">Detalle en conflicto: el aviso va pegado al campo que lo provoca, sin columna lateral.</p>
+          <div style="height: 504px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised);">
+            <div style="width: 390px; height: 720px; display: flex; transform: scale(.7); transform-origin: top left;">
+              <dc-import name="Detalle de producto" estado="conflicto" caso="codigo" tema="claro" compacto="{{ true }}" style="height: 720px; display: block;" hint-size="390px,720px"></dc-import>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;pantallaInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;listado&quot;,&quot;detalle&quot;],&quot;default&quot;:&quot;listado&quot;,&quot;tsType&quot;:&quot;'listado' | 'detalle'&quot;,&quot;section&quot;:&quot;Banco de pruebas&quot;},&quot;estadoInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;vacio&quot;,&quot;datos&quot;,&quot;cargando&quot;,&quot;conflicto&quot;],&quot;default&quot;:&quot;datos&quot;,&quot;tsType&quot;:&quot;'vacio' | 'datos' | 'cargando' | 'conflicto'&quot;,&quot;section&quot;:&quot;Banco de pruebas&quot;},&quot;mostrarTableroMovil&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Tablero&quot;}}">
+class Component extends DCLogic {
+  state = {};
+
+  v(actual, valor) { return actual === valor ? 'primary' : 'secondary'; }
+
+  renderVals() {
+    const p = this.props;
+    const s = {
+      pantalla: this.state.pantalla ?? p.pantallaInicial ?? 'listado',
+      estado: this.state.estado ?? p.estadoInicial ?? 'datos',
+      caso: this.state.caso ?? 'codigo',
+      oscuro: this.state.oscuro ?? false,
+      movil: this.state.movil ?? false
+    };
+    const esDetalle = s.pantalla === 'detalle';
+    return {
+      esListado: !esDetalle,
+      esDetalle,
+      estado: s.estado,
+      caso: s.caso,
+      tema: s.oscuro ? 'oscuro' : 'claro',
+      oscuro: s.oscuro,
+      movil: s.movil,
+      anchoBanco: s.movil ? '390px' : '100%',
+      hayCasos: esDetalle && s.estado === 'conflicto',
+      hayTableroMovil: p.mostrarTableroMovil ?? true,
+      vListado: this.v(s.pantalla, 'listado'),
+      vDetalle: this.v(s.pantalla, 'detalle'),
+      vVacio: this.v(s.estado, 'vacio'),
+      vDatos: this.v(s.estado, 'datos'),
+      vCargando: this.v(s.estado, 'cargando'),
+      vConflicto: this.v(s.estado, 'conflicto'),
+      vCodigo: this.v(s.caso, 'codigo'),
+      vVariante: this.v(s.caso, 'variante'),
+      vImagen: this.v(s.caso, 'imagen'),
+      verListado: () => this.setState({ pantalla: 'listado' }),
+      verDetalle: () => this.setState({ pantalla: 'detalle' }),
+      verVacio: () => this.setState({ estado: 'vacio' }),
+      verDatos: () => this.setState({ estado: 'datos' }),
+      verCargando: () => this.setState({ estado: 'cargando' }),
+      verConflicto: () => this.setState({ estado: 'conflicto' }),
+      verCodigo: () => this.setState({ caso: 'codigo' }),
+      verVariante: () => this.setState({ caso: 'variante' }),
+      verImagen: () => this.setState({ caso: 'imagen' }),
+      cambiarOscuro: (v) => this.setState({ oscuro: v }),
+      cambiarMovil: (v) => this.setState({ movil: v })
+    };
+  }
+}
+
+</script>
+</body>
+</html>

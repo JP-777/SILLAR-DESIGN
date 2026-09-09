@@ -1,0 +1,47 @@
+*** ParedDeSillaresEspera.tsx
+@@
+ import { useState, type CSSProperties } from 'react';
++import { useAnimacionesOcasionales } from '../puerta-animaciones-ocasionales/PuertaAnimacionesOcasionales';
+@@
+   const [movimientoDetenido, setMovimientoDetenido] = useState(false);
++  const { permitidas } = useAnimacionesOcasionales();
++  const movimientoActivo = permitidas && !movimientoDetenido;
+@@
+-        data-movimiento={movimientoDetenido ? 'detenido' : 'activo'}
++        data-movimiento={movimientoActivo ? 'activo' : 'detenido'}
++        data-permiso-ocasional={permitidas ? 'permitido' : 'bloqueado'}
++        data-animacion-ocasional
+@@
+-        <div className="pared-espera__contenido">
++        <div className="pared-espera__contenido" data-animacion-ocasional>
+@@
+                     <span
+                       className="pared-espera__sillar"
++                      data-animacion-ocasional
+@@
+-            <span className="pared-espera__polvo pared-espera__polvo--uno" />
+-            <span className="pared-espera__polvo pared-espera__polvo--dos" />
++            <span
++              className="pared-espera__polvo pared-espera__polvo--uno"
++              data-animacion-ocasional
++            />
++            <span
++              className="pared-espera__polvo pared-espera__polvo--dos"
++              data-animacion-ocasional
++            />
+
+*** pared-de-sillares-espera.css
+@@
++.pared-espera[data-permiso-ocasional='bloqueado'] .pared-espera__detener {
++  display: none;
++}
++
++/* El estado final estático al cortar una salida que ya había empezado. */
++.pared-espera[data-permiso-ocasional='bloqueado'][data-estado='saliendo'],
++.pared-espera[data-permiso-ocasional='bloqueado'][data-estado='saliendo']
++  .pared-espera__contenido {
++  visibility: hidden;
++  opacity: 0;
++  transform: none;
++  animation: none !important;
++}

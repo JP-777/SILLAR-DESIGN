@@ -1,0 +1,21 @@
+/*
+ * Salvaguarda global. Cada propiedad animada debe tener como estilo base su
+ * estado final estático; así quitar la animación nunca deja una pieza a medias.
+ */
+:root:not([data-animaciones-ocasionales='permitidas']) [data-animacion-ocasional] {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/*
+ * La preferencia del sistema vuelve a imponerse en CSS aunque el atributo raíz
+ * sea incorrecto o React todavía no haya montado.
+ */
+@media (prefers-reduced-motion: reduce) {
+  [data-animacion-ocasional] {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

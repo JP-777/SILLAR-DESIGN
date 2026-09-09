@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<title>Presupuesto de animaciones simultáneas</title>
+<style>
+  :root {
+    --fondo: Canvas;
+    --pieza: CanvasText;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: var(--fondo);
+  }
+  #escena {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--ancho), 1fr));
+    gap: .25rem;
+    min-height: 100vh;
+    padding: .5rem;
+  }
+  .pieza {
+    width: var(--ancho);
+    height: var(--alto);
+    background: var(--pieza);
+  }
+  [data-tecnica='compuesta'] .pieza {
+    animation: compuesta 900ms ease-in-out infinite alternate;
+  }
+  [data-tecnica='pintura'] .pieza {
+    animation: pintura 900ms ease-in-out infinite alternate;
+  }
+  [data-tecnica='maquetacion'] .pieza {
+    position: relative;
+    animation: maquetacion 900ms ease-in-out infinite alternate;
+  }
+  @keyframes compuesta {
+    to { opacity: .35; transform: translate3d(.75rem, 0, 0) scale(.96); }
+  }
+  @keyframes pintura {
+    to { filter: blur(.2rem); }
+  }
+  @keyframes maquetacion {
+    to { left: .75rem; width: calc(var(--ancho) - .5rem); }
+  }
+</style>
+<main id="escena"></main>
+<script>
+  const parametros = new URLSearchParams(location.search);
+  const cantidad = Math.max(1, Number(parametros.get('cantidad') ?? 8));
+  const tecnica = parametros.get('tecnica') ?? 'compuesta';
+  const ancho = Math.max(16, Number(parametros.get('ancho') ?? 72));
+  const alto = Math.max(16, Number(parametros.get('alto') ?? 36));
+  const escena = document.querySelector('#escena');
+  escena.dataset.tecnica = tecnica;
+  escena.style.setProperty('--ancho', `${ancho}px`);
+  escena.style.setProperty('--alto', `${alto}px`);
+  escena.replaceChildren(...Array.from({ length: cantidad }, () => {
+    const pieza = document.createElement('div');
+    pieza.className = 'pieza';
+    return pieza;
+  }));
+
+  const intervalos = [];
+  const tareasLargas = [];
+  let anterior = performance.now();
+  const inicio = anterior;
+  try {
+    new PerformanceObserver((lista) => {
+      for (const entrada of lista.getEntries()) tareasLargas.push(entrada.duration);
+    }).observe({ type: 'longtask', buffered: true });
+  } catch {}
+  function fotograma(ahora) {
+    intervalos.push(ahora - anterior);
+    anterior = ahora;
+    if (ahora - inicio < 6000) requestAnimationFrame(fotograma);
+  }
+  requestAnimationFrame(fotograma);
+  setTimeout(() => {
+    const muestras = intervalos.slice(5).sort((a, b) => a - b);
+    const valor = (p) => muestras[Math.min(muestras.length - 1, Math.floor(muestras.length * p))];
+    const mediana = valor(.5);
+    window.__resultado = {
+      cantidad,
+      tecnica,
+      dimensiones: `${ancho}x${alto}`,
+      fotogramas: muestras.length,
+      intervaloMedianoMs: mediana,
+      intervaloP95Ms: valor(.95),
+      fotogramasMayoresA1_5VecesLaMediana: muestras.filter((ms) => ms > mediana * 1.5).length,
+      tareasLargas: tareasLargas.length,
+      totalTareasLargasMs: tareasLargas.reduce((suma, ms) => suma + ms, 0),
+    };
+    document.documentElement.dataset.resultado = JSON.stringify(window.__resultado);
+  }, 6200);
+</script>
+</html>

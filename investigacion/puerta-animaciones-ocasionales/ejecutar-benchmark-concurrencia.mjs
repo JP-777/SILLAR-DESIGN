@@ -1,0 +1,81 @@
+const puerto = Number(process.argv[2] ?? 9338);
+const paginaUrl = process.argv[3];
+const factorCpu = Number(process.argv[4] ?? 1);
+if (!paginaUrl) throw new Error('Falta la URL del benchmark');
+
+const esperar = (ms) => new Promise((resolver) => setTimeout(resolver, ms));
+let objetivos;
+for (let intento = 0; intento < 40; intento += 1) {
+  try {
+    objetivos = await fetch(`http://127.0.0.1:${puerto}/json/list`).then(
+      (respuesta) => respuesta.json(),
+    );
+    break;
+  } catch {
+    await esperar(100);
+  }
+}
+if (!objetivos) throw new Error('El navegador no expuso el puerto de depuración');
+
+const pagina = objetivos.find((objetivo) => objetivo.type === 'page');
+const socket = new WebSocket(pagina.webSocketDebuggerUrl);
+await new Promise((resolver, rechazar) => {
+  socket.addEventListener('open', resolver, { once: true });
+  socket.addEventListener('error', rechazar, { once: true });
+});
+
+let secuencia = 0;
+const pendientes = new Map();
+socket.addEventListener('message', (evento) => {
+  const mensaje = JSON.parse(evento.data);
+  if (!mensaje.id || !pendientes.has(mensaje.id)) return;
+  const pendiente = pendientes.get(mensaje.id);
+  pendientes.delete(mensaje.id);
+  if (mensaje.error) pendiente.rechazar(new Error(JSON.stringify(mensaje.error)));
+  else pendiente.resolver(mensaje.result);
+});
+function enviar(method, params = {}) {
+  const id = ++secuencia;
+  const respuesta = new Promise((resolver, rechazar) => {
+    pendientes.set(id, { resolver, rechazar });
+  });
+  socket.send(JSON.stringify({ id, method, params }));
+  return respuesta;
+}
+
+await enviar('Page.enable');
+await enviar('Runtime.enable');
+await enviar('Performance.enable');
+await enviar('Emulation.setCPUThrottlingRate', { rate: factorCpu });
+await enviar('Page.navigate', { url: paginaUrl });
+
+let resultado;
+for (let intento = 0; intento < 90; intento += 1) {
+  await esperar(100);
+  const evaluacion = await enviar('Runtime.evaluate', {
+    expression: 'window.__resultado ?? null',
+    returnByValue: true,
+  });
+  if (evaluacion.result.value) {
+    resultado = evaluacion.result.value;
+    break;
+  }
+}
+const metricas = await enviar('Performance.getMetrics');
+socket.close();
+if (!resultado) throw new Error('El benchmark no produjo resultados');
+
+const nombres = new Set([
+  'LayoutCount',
+  'RecalcStyleCount',
+  'ScriptDuration',
+  'TaskDuration',
+  'JSHeapUsedSize',
+]);
+resultado.factorCpu = factorCpu;
+resultado.metricasCdp = Object.fromEntries(
+  metricas.metrics
+    .filter((metrica) => nombres.has(metrica.name))
+    .map((metrica) => [metrica.name, metrica.value]),
+);
+console.log(JSON.stringify(resultado));

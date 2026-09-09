@@ -1,0 +1,39 @@
+/* Arnés de revisión — NO es CSS de producto.
+   Solo existe para poder mirar los estados en tablero. Dos cosas:
+
+   1. [data-theme="light"]: tokens.css define el tema claro en :root y el
+      oscuro en [data-theme="dark"]. Para enseñar claro y oscuro en la misma
+      página hace falta poder volver a claro dentro de un ancestro oscuro.
+      Estas líneas son copia literal del bloque de roles de tokens.css.
+      Si tokens.css cambia, esto se queda atrás: revisar en el próximo sync.
+
+   2. Foco del diálogo: ConfirmDialog enfoca su primer control al abrir, pero
+      Chrome no pinta :focus-visible cuando el foco llega por programa tras un
+      clic. Aquí se pinta igual para que la regla del foco visible se pueda
+      comprobar con ratón. Solo tokens, ningún color nuevo. */
+
+[data-theme="light"] {
+  --bg: var(--stone-50);
+  --bg-raised: #FFFFFF;
+  --bg-sunken: var(--stone-100);
+  --text: var(--stone-800);
+  --text-muted: var(--stone-600);
+  --text-subtle: var(--stone-500);
+  --border: var(--stone-200);
+  --border-strong: var(--stone-500);
+  --primary: var(--accent-500);
+  --primary-hover: var(--accent-600);
+  --on-primary: #FFFFFF;
+  --success-bg: #E6F2EC;
+  --warning-bg: #FBF0DD;
+  --danger-bg: #FBEAE7;
+  --shadow: 0 1px 2px rgba(26, 23, 19, .06), 0 1px 3px rgba(26, 23, 19, .05);
+  --shadow-lg: 0 2px 4px rgba(26, 23, 19, .06), 0 8px 24px rgba(26, 23, 19, .08);
+}
+
+.ui-dialog__footer .ui-button:focus,
+.ui-dialog .ui-input:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
