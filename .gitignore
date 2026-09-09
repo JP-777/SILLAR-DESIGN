@@ -1,0 +1,25 @@
+# Claves y credenciales. Nunca, por ningún motivo.
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+**/secrets/
+NANOBANANA_API_KEY*
+GEMINI_API_KEY*
+
+# Salidas de herramientas de imagen, hasta decidir cuáles se conservan
+generado/
+salida/
+*.tmp
+
+# Sistema operativo y editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# Dependencias, si alguna vez se instala algo aquí
+node_modules/
