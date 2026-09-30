@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>M07 · Referencia de diseño Paso 3.5</title>
+<style>
+:root {
+  --stone-50:#FAF8F5;--stone-100:#F2EEE7;--stone-200:#E3DCD1;--stone-300:#CBC2B2;
+  --stone-400:#A29886;--stone-500:#7A7062;--stone-600:#5C5447;--stone-700:#443E34;
+  --stone-800:#2C2822;--stone-900:#1A1713;--accent-100:#D4E5F0;--accent-300:#7FB0D0;
+  --accent-500:#1F6795;--accent-600:#18536F;--accent-700:#123D55;
+  --success:#2A7052;--success-bg:#E6F2EC;--warning:#905C10;--warning-bg:#FBF0DD;
+  --danger:#B23A2B;--danger-bg:#FBEAE7;
+  --bg:var(--stone-50);--bg-raised:#fff;--bg-sunken:var(--stone-100);
+  --text:var(--stone-800);--text-muted:var(--stone-600);--text-subtle:#726A5C;
+  --border:var(--stone-200);--border-strong:var(--stone-500);
+  --primary:var(--accent-500);--primary-hover:var(--accent-600);--on-primary:#fff;
+  --link:var(--primary);--selected:var(--accent-600);--selected-bg:var(--accent-100);
+  --on-danger:#fff;--r-sm:3px;--r-md:5px;--r-lg:8px;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;
+  --shadow:0 1px 2px rgba(26,23,19,.06),0 1px 3px rgba(26,23,19,.05);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+:root[data-theme="dark"]{
+  --bg:var(--stone-900);--bg-raised:var(--stone-800);--bg-sunken:#12100D;
+  --text:var(--stone-100);--text-muted:var(--stone-300);--text-subtle:var(--stone-400);
+  --border:var(--stone-700);--border-strong:var(--stone-400);--primary:var(--accent-600);
+  --primary-hover:var(--accent-500);--link:var(--accent-300);--selected:var(--accent-300);
+  --selected-bg:var(--accent-700);--success:#5FAE84;--success-bg:#17241E;
+  --warning:#C79341;--warning-bg:#2A2115;--danger:#E08670;--danger-bg:#2A1A17;
+  --on-danger:var(--stone-900);--shadow:0 1px 3px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 var(--font)}
+button,input,select,textarea{font:inherit} button{cursor:pointer}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.ref{padding:10px 16px;background:var(--warning-bg);color:var(--warning);border-bottom:1px solid var(--border)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;background:var(--bg-raised);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
+.ctrl{border:1px solid var(--border-strong);background:var(--bg-raised);color:var(--text);border-radius:var(--r-md);padding:8px 10px}
+.shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:calc(100vh - 96px)}
+.side{background:var(--bg-raised);border-right:1px solid var(--border);padding:16px 12px}
+.brand{font-weight:700;letter-spacing:.13em;font-size:12px;color:var(--text-subtle);margin-bottom:20px}
+.group{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-subtle);margin:18px 10px 6px}
+.nav{display:block;color:var(--text-muted);text-decoration:none;padding:9px 10px;border-radius:var(--r-md);margin:2px 0}
+.nav.current{background:var(--selected-bg);color:var(--selected);font-weight:700}
+.main{min-width:0}.top{background:var(--bg-raised);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;justify-content:space-between;gap:12px}
+.page{max-width:1080px;margin:auto;padding:32px 24px 64px}.head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:24px}
+h1{font-size:26px;margin:0}.muted{color:var(--text-muted)}.subtle{color:var(--text-subtle)}
+.card{background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:18px}
+.stack{display:grid;gap:16px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid transparent;border-radius:var(--r-md);padding:9px 12px;min-height:40px;background:var(--primary);color:var(--on-primary);font-weight:600}
+.btn.secondary{background:var(--bg-raised);border-color:var(--border-strong);color:var(--text)}
+.btn.ghost{background:transparent;color:var(--text);border-color:var(--border)}
+.btn.danger{background:var(--danger);color:var(--on-danger)}
+.badge{display:inline-block;border-radius:999px;padding:3px 8px;background:var(--bg-sunken);color:var(--text-muted);font-size:12px;font-weight:650}
+.badge.warn{background:var(--warning-bg);color:var(--warning)}
+.badge.good{background:var(--success-bg);color:var(--success)}
+.alert{padding:12px 14px;border-radius:var(--r-md);background:var(--warning-bg);color:var(--warning);border:1px solid var(--border)}
+.alert.err{background:var(--danger-bg);color:var(--danger)}
+.tablewrap{overflow:auto;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--bg-raised)}
+table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top}th{font-size:12px;color:var(--text-subtle)}
+.field{display:grid;gap:5px}.field label{font-weight:650;font-size:13px}.input{width:100%;border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--bg-raised);color:var(--text);padding:9px 10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}.drawer{position:fixed;right:0;top:0;bottom:0;width:min(520px,100%);background:var(--bg-raised);border-left:1px solid var(--border);box-shadow:-10px 0 28px rgba(0,0,0,.12);padding:20px;overflow:auto;z-index:20}.veil{position:fixed;inset:0;background:rgba(26,23,19,.45);z-index:19}
+.hidden{display:none!important}.mobile .shell{grid-template-columns:1fr}.mobile .side{display:none}.mobile .page{padding:20px 14px 48px}.mobile .top{padding:10px 14px}.mobile .tablewrap{overflow:visible;border:0;background:transparent}.mobile table,.mobile thead,.mobile tbody,.mobile tr,.mobile th,.mobile td{display:block;min-width:0}.mobile thead{display:none}.mobile tr{margin-bottom:12px;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--bg-raised);padding:12px}.mobile td{border:0;padding:5px 0}.mobile td:before{content:attr(data-label);display:block;font-size:11px;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.05em}.mobile .two{grid-template-columns:1fr}.mobile .head{display:grid}
+.note{border-left:3px solid var(--primary);padding-left:12px;color:var(--text-muted)}
+.lines{display:grid;gap:10px}.line{border:1px solid var(--border);border-radius:var(--r-md);padding:12px;background:var(--bg-raised);display:grid;grid-template-columns:1fr auto;gap:12px}
+@media(max-width:860px){.shell{grid-template-columns:1fr}.side{display:none}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="ref"><strong>REFERENCIA DE DISEÑO.</strong> No es código de producto ni define endpoints.</div>
+<div class="controls">
+  <select id="surface" class="ctrl" aria-label="Superficie">
+    <option value="a1">A1 · Personalizaciones</option><option value="a2">A2 · Detalle personalización</option>
+    <option value="a3">A3 · Estado/notas/reenlace</option><option value="a4">A4 · Volumen</option>
+    <option value="a5">A5 · Detalle volumen</option><option value="a6">A6 · Cotizaciones</option>
+    <option value="a7">A7 · Crear cotización</option><option value="a8">A8 · Editor borrador</option>
+    <option value="a9">A9 · Detalle cotización</option>
+  </select>
+  <select id="state" class="ctrl" aria-label="Estado">
+    <option value="data">Con datos</option><option value="empty">Vacío</option><option value="loading">Cargando</option>
+    <option value="error">Error</option><option value="conflict">Conflicto</option>
+  </select>
+  <button class="ctrl" id="theme">Tema: claro</button>
+  <button class="ctrl" id="viewport">Vista: escritorio</button>
+  <select id="role" class="ctrl" aria-label="Rol"><option value="editor">Rol: editor</option><option value="admin">Rol: admin</option></select>
+</div>
+<div id="app">
+<div class="shell">
+  <aside class="side"><div class="brand">SILLAR</div><a class="nav">Inicio</a><div class="group">Solicitudes</div><a class="nav current">Personalizaciones</a><a class="nav">Solicitudes de volumen</a><a class="nav">Cotizaciones</a></aside>
+  <main class="main">
+    <div class="top"><strong>Negocio de demostración</strong><span class="muted">Panel administrativo</span></div>
+    <div id="screen" class="page"></div>
+  </main>
+</div>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const screens={
+a1:{title:"Personalizaciones",desc:"Solicitudes donde cambia la especificación de un producto.",columns:["Producto","Solicitud","Estado","Fecha",""],rows:[
+["Arreglo Día de la Madre","Cambiar peluche por uno azul","En revisión","30/09/2026","Ver detalle"],
+["Bolsa de dulces","Solo chocolates · Requiere reenlace","Recibida","30/09/2026","Ver detalle"]]},
+a2:{title:"Detalle de personalización",desc:"Contexto completo y notas internas del personal.",detail:true},
+a3:{title:"Reenlazar producto",desc:"Elige un producto activo del catálogo.",relink:true},
+a4:{title:"Solicitudes de volumen",desc:"Pedidos donde la cantidad cambia el precio.",columns:["Institución","Solicitud","Cantidad","Estado",""],rows:[
+["Colegio San Martín","Cordones para desfile","100","En revisión","Ver detalle"],
+["Asociación Cultural","Recuerdos institucionales","60","Recibida","Ver detalle"]]},
+a5:{title:"Detalle de solicitud de volumen",desc:"Datos institucionales y notas internas.",volume:true},
+a6:{title:"Cotizaciones",desc:"Borradores y documentos enviados al cliente.",columns:["Número de cotización","Origen","Total","Estado","Validez",""],rows:[
+["Número de cotización","Personalización","S/ 420.00","Enviada","Ya no es válida","Ver detalle"],
+["Número de cotización","Solicitud de volumen","S/ 860.00","Aprobada","Válida","Ver detalle"]]},
+a7:{title:"Crear cotización",desc:"Referencia de SPEC · escritura HTTP todavía pendiente.",create:true},
+a8:{title:"Cotización en borrador",desc:"Edita líneas antes de enviarla. Solo el borrador se puede modificar.",edit:true},
+a9:{title:"Detalle de cotización",desc:"Documento enviado. La invalidación no cambia su estado.",quote:true}
+};
+function badge(v){
+ const low=v.toLowerCase();
+ const cls=low.includes("no es válida")||low.includes("reenlace")?"warn":low.includes("aprob")||low.includes("pag")||low==="válida"?"good":"";
+ return `<span class="badge ${cls}">${v}</span>`;
+}
+function header(s){return `<div class="head"><div><h1>${s.title}</h1><p class="muted">${s.desc}</p></div></div>`}
+function genericTable(s,state){
+ if(state==="empty")return header(s)+`<div class="card"><h2>Todavía no hay registros</h2><p class="muted">Cuando llegue el primero aparecerá aquí.</p></div>`;
+ if(state==="loading")return header(s)+`<div class="card">Cargando ${s.title.toLowerCase()}…</div>`;
+ if(state==="error")return header(s)+`<div class="alert err"><strong>No pudimos cargar esta bandeja.</strong><br>Revisa la conexión y vuelve a intentarlo.</div><p style="margin-top:12px"><button class="btn secondary">Reintentar</button></p>`;
+ if(state==="conflict")return header(s)+`<div class="card"><div class="field"><label>Estado</label><select class="input"><option>En revisión</option></select></div><div style="margin-top:16px"><p class="muted">No hay resultados con este filtro.</p><button class="btn ghost">Quitar el filtro</button></div></div>`;
+ return header(s)+`<div class="row" style="margin-bottom:16px"><span class="muted">Estado:</span>${["Todos","Recibida","En revisión","Cotizada","Cerrada","Rechazada"].map((x,i)=>`<button class="btn ${i?'secondary':''}">${x}</button>`).join("")}</div><div class="tablewrap"><table><thead><tr>${s.columns.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${s.rows.map(r=>`<tr>${r.map((x,i)=>`<td data-label="${s.columns[i]}">${i===2||i===3||i===4&&x!=="Ver detalle"?badge(x):x==="Ver detalle"?`<button class="btn secondary">${x}</button>`:x}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+function detailBase(title,volume=false){
+ return `<div class="veil"></div><section class="drawer"><div class="row" style="justify-content:space-between"><h1>${title}</h1><button class="btn ghost">Cerrar</button></div>
+ <div class="stack" style="margin-top:20px">
+ ${volume?`<div><div class="subtle">Institución</div><strong>Colegio San Martín</strong></div><div><div class="subtle">Cantidad</div><strong>100</strong></div>`:`<div><div class="subtle">Producto de origen</div><strong>Arreglo Día de la Madre</strong></div><div class="alert">Requiere reenlace. El producto de origen ya no está activo.</div>`}
+ <div><div class="subtle">Solicitud</div><p>${volume?"Cordones para el desfile escolar.":"Cambiar el peluche por uno azul y usar solo chocolates."}</p></div>
+ <div class="field"><label>Estado</label><select class="input"><option>En revisión</option><option>${volume?"Cotizada":"Cotizada"}</option><option>Rechazada</option></select></div>
+ <div class="field"><label>Notas internas · Solo personal</label><textarea class="input" rows="5">Confirmar detalles antes de cotizar.</textarea></div>
+ <div class="row"><button class="btn">Guardar notas</button>${volume?"":`<button class="btn secondary">Reenlazar producto</button>`}<button class="btn secondary">Preparar cotización</button></div>
+ <div class="admin-only"><hr style="border:0;border-top:1px solid var(--border)"><button class="btn danger">Dar de baja</button></div>
+ </div></section>`;
+}
+function custom(s,state,key){
+ if(["a1","a4","a6"].includes(key)) return genericTable(s,state);
+ if(state==="loading")return header(s)+`<div class="card">Cargando ${s.title.toLowerCase()}…</div>`;
+ if(state==="error")return header(s)+`<div class="alert err"><strong>No pudimos completar la operación.</strong><br>Conserva el contexto y vuelve a intentarlo.</div>`;
+ if(state==="empty" && key==="a3")return header(s)+`<div class="card"><p>No hay productos que coincidan.</p><button class="btn ghost">Cambiar búsqueda</button></div>`;
+ if(state==="conflict"){
+   const msg={a2:"La solicitud ya está cerrada y no admite más cambios de estado.",a3:"Ese producto no está activo en el catálogo. Elige uno que lo esté.",a5:"Una solicitud en revisión no puede pasar directamente a cerrada.",a7:"Esta solicitud ya está cerrada o rechazada y no admite una nueva cotización.",a8:"Esta cotización ya fue enviada. Sus líneas no se pueden editar.",a9:"Esta cotización sigue Enviada, pero ya no es válida porque cambió un precio de catálogo."}[key]||"La operación ya no es válida.";
+   return header(s)+`<div class="alert"><strong>No se puede completar esa acción.</strong><br>${msg}</div>`;
+ }
+ if(key==="a2") return header(s)+detailBase("Personalización");
+ if(key==="a5") return header(s)+detailBase("Solicitud de volumen",true);
+ if(key==="a3") return header(s)+`<div class="card stack"><div class="field"><label>Buscar producto activo</label><input class="input" value="arreglo"></div><div class="row"><div><strong>Arreglo floral clásico</strong><div class="muted">Producto activo</div></div><button class="btn" style="margin-left:auto">Reenlazar</button></div><button class="btn ghost">Volver al detalle</button></div>`;
+ if(key==="a7") return header(s)+`<div class="stack"><div class="card"><div class="subtle">Solicitud de origen</div><strong>Colegio San Martín · 100 cordones para desfile</strong></div><div class="card stack"><div class="note">Número de cotización: se asignará al guardar.</div><button class="btn">Añadir línea</button><div class="line"><div><strong>Cordón institucional</strong><div class="muted">100 × S/ 4.20</div></div><strong>S/ 420.00</strong></div><div class="row" style="justify-content:flex-end"><strong>Total: S/ 420.00</strong></div><button class="btn">Guardar borrador</button></div></div>`;
+ if(key==="a8") return header(s)+`<div class="stack"><div class="alert">Referencia de SPEC: la escritura HTTP todavía no existe en el commit verificado.</div><div class="card lines"><div class="line"><div><strong>Impresión especial</strong><div class="muted">Presentación: A4 · Precio de catálogo al cotizar: a consultar</div><div class="row"><button class="btn ghost">Subir</button><button class="btn ghost">Bajar</button></div></div><div><strong>50 × S/ 3.50</strong></div></div><div class="line"><div><strong>Empaque personalizado</strong><div class="muted">Línea libre · Precio acordado</div></div><strong>50 × S/ 1.20</strong></div><div class="row" style="justify-content:flex-end"><strong>Total: S/ 235.00</strong></div><button class="btn">Guardar borrador</button></div></div>`;
+ if(key==="a9") return header(s)+`<div class="stack"><div class="card"><div class="row"><span class="subtle">Número de cotización</span>${badge("Enviada")}</div><h2 style="margin:.5em 0">Cotización</h2><div class="two"><div><span class="subtle">Origen</span><br>Personalización</div><div><span class="subtle">Total</span><br><strong>S/ 420.00</strong></div></div></div><div class="alert"><strong>Esta cotización ya no es válida.</strong><br>Cambió el precio de catálogo de una presentación cotizada.</div><div class="card"><h2>Líneas</h2><p>100 × Cordón institucional — S/ 4.20</p></div><div class="row"><button class="btn">Preparar para enviar</button><span class="muted">Luego envíala desde tu propio WhatsApp.</span></div><div class="admin-only"><button class="btn secondary">Registrar pago</button></div></div>`;
+ return header(s)+`<div class="card">Estado de referencia.</div>`;
+}
+function render(){
+ const key=$("#surface").value,state=$("#state").value,s=screens[key];
+ $("#screen").innerHTML=custom(s,state,key);
+ const isAdmin=$("#role").value==="admin";
+ document.querySelectorAll(".admin-only").forEach(x=>x.style.display=isAdmin?"block":"none");
+}
+$("#surface").onchange=render;$("#state").onchange=render;$("#role").onchange=render;
+$("#theme").onclick=()=>{const dark=document.documentElement.dataset.theme==="dark";document.documentElement.dataset.theme=dark?"light":"dark";$("#theme").textContent="Tema: "+(dark?"claro":"oscuro")};
+$("#viewport").onclick=()=>{const a=$("#app");a.classList.toggle("mobile");$("#viewport").textContent="Vista: "+(a.classList.contains("mobile")?"móvil":"escritorio")};
+render();
+</script>
+</body>
+</html>

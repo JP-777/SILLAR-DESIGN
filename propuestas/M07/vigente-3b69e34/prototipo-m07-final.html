@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>M07 · Paso 3.5 · Revisión final</title>
+<style>
+:root{--stone-50:#FAF8F5;--stone-100:#F2EEE7;--stone-200:#E3DCD1;--stone-300:#CBC2B2;--stone-400:#A29886;--stone-500:#7A7062;--stone-600:#5C5447;--stone-700:#443E34;--stone-800:#2C2822;--stone-900:#1A1713;--accent-100:#D4E5F0;--accent-300:#7FB0D0;--accent-500:#1F6795;--accent-600:#18536F;--accent-700:#123D55;--success:#2A7052;--success-bg:#E6F2EC;--warning:#905C10;--warning-bg:#FBF0DD;--danger:#B23A2B;--danger-bg:#FBEAE7;--bg:var(--stone-50);--bg-raised:#fff;--bg-sunken:var(--stone-100);--text:var(--stone-800);--text-muted:var(--stone-600);--text-subtle:#726A5C;--border:var(--stone-200);--border-strong:var(--stone-500);--primary:var(--accent-500);--primary-hover:var(--accent-600);--on-primary:#fff;--link:var(--primary);--selected:var(--accent-600);--selected-bg:var(--accent-100);--on-danger:#fff;--r-sm:3px;--r-md:5px;--r-lg:8px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+:root[data-theme=dark]{--bg:var(--stone-900);--bg-raised:var(--stone-800);--bg-sunken:#12100D;--text:var(--stone-100);--text-muted:var(--stone-300);--text-subtle:var(--stone-400);--border:var(--stone-700);--border-strong:var(--stone-400);--primary:var(--accent-600);--primary-hover:var(--accent-500);--link:var(--accent-300);--selected:var(--accent-300);--selected-bg:var(--accent-700);--success:#5FAE84;--success-bg:#17241E;--warning:#C79341;--warning-bg:#2A2115;--danger:#E08670;--danger-bg:#2A1A17;--on-danger:var(--stone-900)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 var(--font)}button,input,select,textarea{font:inherit}:focus-visible{outline:2px solid var(--primary);outline-offset:2px}.ref{padding:10px 16px;background:var(--warning-bg);color:var(--warning);border-bottom:1px solid var(--border)}.controls{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;background:var(--bg-raised);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30}.ctrl,.input{border:1px solid var(--border-strong);background:var(--bg-raised);color:var(--text);border-radius:var(--r-md);padding:9px 10px}.shell{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:calc(100vh - 100px)}.side{background:var(--bg-raised);border-right:1px solid var(--border);padding:16px 12px}.brand{font-weight:700;letter-spacing:.14em;font-size:12px;color:var(--text-subtle);margin-bottom:22px}.group{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-subtle);margin:18px 10px 6px}.nav{display:block;color:var(--text-muted);text-decoration:none;padding:9px 10px;border-radius:var(--r-md);margin:2px 0}.nav.current{background:var(--selected-bg);color:var(--selected);font-weight:700}.top{background:var(--bg-raised);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;justify-content:space-between}.page{max-width:1080px;margin:auto;padding:32px 24px 64px}.head{display:flex;justify-content:space-between;gap:16px;align-items:start;margin-bottom:24px}h1{font-size:26px;margin:0}h2{font-size:18px}.muted{color:var(--text-muted)}.subtle{color:var(--text-subtle)}.card{background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px}.stack{display:grid;gap:16px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.btn{border:1px solid transparent;border-radius:var(--r-md);padding:9px 12px;min-height:40px;background:var(--primary);color:var(--on-primary);font-weight:600;cursor:pointer}.btn.secondary{background:var(--bg-raised);border-color:var(--border-strong);color:var(--text)}.btn.ghost{background:transparent;color:var(--text);border-color:var(--border)}.btn.danger{background:var(--danger);color:var(--on-danger)}.badge{display:inline-block;border-radius:999px;padding:3px 8px;background:var(--bg-sunken);color:var(--text-muted);font-size:12px;font-weight:650}.badge.warn{background:var(--warning-bg);color:var(--warning)}.badge.good{background:var(--success-bg);color:var(--success)}.alert{padding:12px 14px;border-radius:var(--r-md);background:var(--warning-bg);color:var(--warning);border:1px solid var(--border)}.alert.info{background:var(--selected-bg);color:var(--selected)}.alert.err{background:var(--danger-bg);color:var(--danger)}.tablewrap{overflow:auto;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--bg-raised)}table{width:100%;border-collapse:collapse;min-width:780px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top}th{font-size:12px;color:var(--text-subtle)}.identity strong,.identity span{display:block}.field{display:grid;gap:5px}.field label{font-weight:650;font-size:13px}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}.line{border:1px solid var(--border);border-radius:var(--r-md);padding:12px;background:var(--bg-raised);display:grid;grid-template-columns:1fr auto;gap:12px}.admin-only{display:none}.mobile .shell{grid-template-columns:1fr}.mobile .side{display:none}.mobile .page{padding:20px 14px 48px}.mobile .tablewrap{overflow:visible;border:0;background:transparent}.mobile table,.mobile thead,.mobile tbody,.mobile tr,.mobile th,.mobile td{display:block;min-width:0}.mobile thead{display:none}.mobile tr{margin-bottom:12px;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--bg-raised);padding:12px}.mobile td{border:0;padding:5px 0}.mobile td:before{content:attr(data-label);display:block;font-size:11px;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.05em}.mobile .two{grid-template-columns:1fr}.mobile .head{display:grid}@media(max-width:860px){.shell{grid-template-columns:1fr}.side{display:none}.two{grid-template-columns:1fr}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:opacity 80ms!important}}
+</style></head>
+<body>
+<div class="ref"><strong>PROPUESTA FINAL DE DISEÑO.</strong> No es código de producto ni aprobación del Paso 3.5.</div>
+<div class="controls">
+<select id="surface" class="ctrl"><option value="a1">A1 · Personalizaciones</option><option value="a2">A2 · Detalle</option><option value="a3">A3 · Reenlace</option><option value="a4">A4 · Volumen</option><option value="a5">A5 · Detalle volumen</option><option value="a6">A6 · Cotizaciones</option><option value="a7">A7 · Crear cotización</option><option value="a8">A8 · Editor borrador</option><option value="a9">A9 · Detalle/ciclo</option></select>
+<select id="state" class="ctrl"><option value="data">Datos</option><option value="empty">Vacío</option><option value="loading">Cargando</option><option value="error">Error</option><option value="conflict">Conflicto</option></select>
+<button id="theme" class="ctrl">Tema: claro</button><button id="view" class="ctrl">Vista: escritorio</button>
+<select id="role" class="ctrl"><option value="editor">Rol: editor</option><option value="admin">Rol: admin</option></select>
+</div>
+<div id="app"><div class="shell"><aside class="side"><div class="brand">SILLAR</div><a class="nav">Inicio</a><div class="group">Solicitudes</div><a class="nav current">Personalizaciones</a><a class="nav">Solicitudes de volumen</a><a class="nav">Cotizaciones</a></aside><main><div class="top"><strong>Negocio de demostración</strong><span class="muted">Panel administrativo</span></div><div id="screen" class="page"></div></main></div></div>
+<script>
+const $=s=>document.querySelector(s);
+const client=(available=true,detail=false)=>available?`<div class="identity"><strong>María Torres</strong><span class="muted">maria@ejemplo.test</span>${detail?`<span class="muted">987 654 321</span>`:""}</div>`:`<div class="identity"><strong>Cliente no disponible</strong><span class="muted">La solicitud conserva sus propios datos.</span></div>`;
+const badge=(x,c="")=>`<span class="badge ${c}">${x}</span>`;
+const head=(t,d)=>`<div class="head"><div><h1>${t}</h1><p class="muted">${d}</p></div></div>`;
+function table(title,desc,kind,state){
+ if(state==="empty")return head(title,desc)+`<div class="card"><h2>Todavía no hay registros</h2><p class="muted">Cuando llegue el primero aparecerá aquí.</p></div>`;
+ if(state==="loading")return head(title,desc)+`<div class="card">Cargando ${title.toLowerCase()}…</div>`;
+ if(state==="error")return head(title,desc)+`<div class="alert err">No pudimos cargar esta bandeja. Revisa la conexión y vuelve a intentarlo.</div>`;
+ if(state==="conflict")return head(title,desc)+`<div class="card"><p>No hay resultados con este filtro.</p><button class="btn ghost">Quitar filtro</button></div>`;
+ const quote=kind==="quotes";
+ const rows=quote?[
+  [client(),"<strong>C-2026-0001</strong>","S/ 420.00",badge("Enviada"),badge("Ya no es válida","warn"),"Ver detalle"],
+  [client(false),"<strong>C-2026-0002</strong>","S/ 860.00",badge("Aprobada","good"),"Válida","Ver detalle"]
+ ]:[
+  [client(),kind==="vol"?"Colegio San Martín":"Arreglo Día de la Madre",kind==="vol"?"100 cordones":"Cambiar peluche",badge("En revisión"),"Ver detalle"],
+  [client(false),kind==="vol"?"Asociación Cultural":"Bolsa de dulces",kind==="vol"?"60 recuerdos":"Solo chocolates",badge("Recibida"),"Ver detalle"]
+ ];
+ const cols=quote?["Cliente","Número de cotización","Total","Estado","Validez",""]:["Cliente",kind==="vol"?"Institución":"Producto","Solicitud","Estado",""];
+ return head(title,desc)+`<div class="tablewrap"><table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>`<td data-label="${cols[i]}">${i===r.length-1?`<button class="btn secondary">${v}</button>`:v}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+function render(){
+ const k=$("#surface").value,s=$("#state").value,admin=$("#role").value==="admin"; let h="";
+ if(k==="a1")h=table("Personalizaciones","Solicitudes donde cambia la especificación.","spec",s);
+ if(k==="a4")h=table("Solicitudes de volumen","La cantidad cambia el precio.","vol",s);
+ if(k==="a6")h=table("Cotizaciones","Documentos comerciales y su vigencia.","quotes",s);
+ if(["a2","a5"].includes(k)){
+   if(s==="loading")h=head("Detalle","")+`<div class="card">Cargando detalle…</div>`;
+   else if(s==="error")h=head("Detalle","")+`<div class="alert err">No pudimos cargar el detalle.</div>`;
+   else if(s==="conflict")h=head("Detalle","")+`<div class="alert">La transición solicitada ya no está permitida. Revisa el estado actual.</div>`;
+   else h=head(k==="a2"?"Personalización":"Solicitud de volumen","Detalle administrativo")+
+   `<div class="two"><div class="card stack"><h2>Cliente</h2>${client(s!=="empty",true)}</div><div class="card"><h2>Estado</h2>${badge("En revisión")}</div></div>
+    <div class="card stack" style="margin-top:16px"><div class="field"><label>Notas internas · Solo personal</label><textarea class="input" rows="4">Confirmar antes de cotizar.</textarea></div><div class="row"><button class="btn">Guardar notas</button>${k==="a2"?`<button class="btn secondary">Reenlazar producto</button>`:""}<button class="btn secondary">Crear cotización</button></div><div class="admin-only"><button class="btn danger">Dar de baja</button></div></div>`;
+ }
+ if(k==="a3"){
+  if(s==="empty")h=head("Reenlazar producto","Solo productos activos")+`<div class="card">No hay productos que coincidan.</div>`;
+  else if(s==="conflict")h=head("Reenlazar producto","")+`<div class="alert">Ese producto no está activo en el catálogo. Elige uno que lo esté.</div>`;
+  else h=head("Reenlazar producto","Solo productos activos")+`<div class="card stack"><input class="input" value="arreglo" aria-label="Buscar producto"><div class="row"><strong>Arreglo floral clásico</strong><button class="btn" style="margin-left:auto">Reenlazar</button></div></div>`;
+ }
+ if(k==="a7"){
+  if(s==="conflict")h=head("Crear cotización","")+`<div class="alert">La solicitud está cerrada o rechazada y ya no se cotiza.</div>`;
+  else h=head("Crear cotización","Crea un borrador desde la solicitud")+
+  `<div class="two"><div class="card stack"><h2>Cliente</h2>${client(s!=="empty",true)}</div><div class="card"><span class="subtle">Número</span><h2>Se asignará al crear</h2></div></div>
+   <div class="card stack" style="margin-top:16px"><p>Puede crearse sin líneas y completarse después.</p><button class="btn">Crear borrador</button></div>`;
+ }
+ if(k==="a8"){
+  if(s==="conflict")h=head("C-2026-0001","Cotización")+`<div class="alert">Esta cotización ya está enviada: sus líneas solo se editan en borrador. Crea una nueva desde la misma solicitud.</div>`;
+  else h=head("C-2026-0001 · Borrador","Edita las líneas antes de enviar")+
+  `<div class="card stack"><div class="line"><div><strong>Cordón institucional</strong><div class="muted">Catálogo: S/ 0.80 · Precio cobrado: S/ 0.70</div><div class="row"><button class="btn ghost">Subir</button><button class="btn ghost">Bajar</button></div></div><strong>100 × S/ 0.70</strong></div>
+   <div class="line"><div><strong>Grabado del escudo</strong><div class="muted">Línea libre</div></div><strong>1 × S/ 20.00</strong></div>
+   <div class="alert info"><strong>Mayorista:</strong> A precio de lista, esta cotización alcanza el umbral. El descuento lo decide el personal.</div>
+   <div class="row"><button class="btn">Guardar líneas</button><button class="btn secondary">Enviar cotización</button></div></div>`;
+ }
+ if(k==="a9"){
+  if(s==="conflict")h=head("C-2026-0001","Cotización enviada")+`<div class="alert"><strong>Ya no es válida.</strong><br>Cambió el precio de catálogo de una presentación. El estado sigue siendo Enviada.</div>`;
+  else h=head("C-2026-0001","Cotización")+
+  `<div class="two"><div class="card stack"><div>${badge("Enviada")}</div><div><span class="subtle">Cliente</span>${client(true,true)}</div><div><span class="subtle">Total</span><h2>S/ 420.00</h2></div></div>
+   <div class="card stack"><h2>Acciones</h2><button class="btn">Preparar para enviar</button><span class="muted">Envíala desde tu propio WhatsApp.</span><button class="btn secondary">Registrar aprobación</button><div class="admin-only"><button class="btn secondary">Registrar pago</button><button class="btn danger">Dar de baja</button></div></div></div>
+   <div class="card" style="margin-top:16px"><h2>Pago</h2><p class="muted">Yape requiere código de operación. Efectivo no requiere referencia. Tarjeta aún no está disponible.</p><p><strong>Registrado por:</strong> caja@ejemplo.test <span class="subtle">(dato provisional; C13)</span></p></div>`;
+ }
+ $("#screen").innerHTML=h;
+ document.querySelectorAll(".admin-only").forEach(x=>x.style.display=admin?"block":"none");
+}
+$("#surface").onchange=render;$("#state").onchange=render;$("#role").onchange=render;
+$("#theme").onclick=()=>{const d=document.documentElement.dataset.theme==="dark";document.documentElement.dataset.theme=d?"light":"dark";$("#theme").textContent="Tema: "+(d?"claro":"oscuro")};
+$("#view").onclick=()=>{const a=$("#app");a.classList.toggle("mobile");$("#view").textContent="Vista: "+(a.classList.contains("mobile")?"móvil":"escritorio")};
+render();
+</script></body></html>
